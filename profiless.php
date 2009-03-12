@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Profiless
-Plugin URI: http://www.lautre-monde.fr
+Plugin URI: http://www.lautre-monde.fr/webtech/profiless/
 Description: Profiless is a plugin that removes access to the profile page for the subscriber level user.
 Author: Olivier
 Version: 1.0
