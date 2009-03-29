@@ -4,7 +4,7 @@ Plugin Name: Profiless
 Plugin URI: http://www.lautre-monde.fr/webtech/profiless/
 Description: Profiless is a plugin that removes access to the profile page for the subscriber level user.
 Author: Olivier
-Version: 1.0
+Version: 1.1
 Author URI: http://www.lautre-monde.fr
 */
 
@@ -17,6 +17,7 @@ Author URI: http://www.lautre-monde.fr
 - Copyrights : Olivier @ L'autre monde 2005-2009
 
 2/ Release history :
+- 1.1 (29/03/2009) : prevented access through alternate url
 - 1.0 (10/03/2009) : original release
 
 3/ Plugin description :
@@ -24,7 +25,7 @@ This plugin is very simple! It removes the menu icon to access the profile page 
 homepage if it tries to access directly the profile page (as the menuitem has been removed).
 */
 
-$profiless_version = '1.0';
+$profiless_version = '1.1';
 
 function profiless_remove_profile_access()
 {
@@ -34,11 +35,12 @@ function profiless_remove_profile_access()
     $requesteduri = $_SERVER['REQUEST_URI'];
     $destpage = get_option('siteurl') . '/wp-admin/index.php';
 	$result = strpos($requesteduri, '/wp-admin/profile.php');
+	$result2 = strpos($requesteduri, '/wp-admin/user-edit.php');
 
     if ($current_user->user_level == 0)
         unset($menu[50]);
 
-    if (($result != 0) && ($current_user->user_level == 0))
+    if ((($result != 0) || ($result2 != 0)) && ($current_user->user_level == 0))
         wp_safe_redirect($destpage);
 
 	return;
