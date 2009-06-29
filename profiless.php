@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: Profiless
-Plugin URI: http://www.lautre-monde.fr/webtech/profiless/
+Plugin URI: http://www.lautre-monde.fr/profiless/
 Description: Profiless is a plugin that removes access to the profile page for the subscriber level user.
 Author: Olivier
-Version: 1.1
+Version: 1.2
 Author URI: http://www.lautre-monde.fr
 */
 
@@ -17,6 +17,7 @@ Author URI: http://www.lautre-monde.fr
 - Copyrights : Olivier @ L'autre monde 2005-2009
 
 2/ Release history :
+- 1.2 (29/06/2009) : updated for WP 2.8 compatibility, improved page access test logic
 - 1.1 (29/03/2009) : prevented access through alternate url
 - 1.0 (10/03/2009) : original release
 
@@ -29,7 +30,7 @@ $profiless_version = '1.1';
 
 function profiless_remove_profile_access()
 {
-	global $menu, $current_user;
+	global $menu, $current_user, $wp_version;
 
 	$plugin_url = trailingslashit(get_option('siteurl')) . 'wp-content/plugins/' . basename(dirname(__FILE__)) .'/';
     $requesteduri = $_SERVER['REQUEST_URI'];
@@ -38,9 +39,14 @@ function profiless_remove_profile_access()
 	$result2 = strpos($requesteduri, '/wp-admin/user-edit.php');
 
     if ($current_user->user_level == 0)
-        unset($menu[50]);
+	{
+		if ($wp_version >= '2.8')
+			unset($menu[70]);
+		else
+			unset($menu[50]);
+	}
 
-    if ((($result != 0) || ($result2 != 0)) && ($current_user->user_level == 0))
+    if ((($result !== false) || ($result2 !== false)) && ($current_user->user_level == 0))
         wp_safe_redirect($destpage);
 
 	return;

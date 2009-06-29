@@ -3,8 +3,8 @@ Contributors: Olivier
 Donate link: http://www.lautre-monde.fr
 Tags: admin,profile,security
 Requires at least: 2.7.1
-Tested up to: 2.7.1
-Stable tag: 1.1
+Tested up to: 2.8
+Stable tag: 1.2
 
 Profiless is a plugin that removes access to the profile page for the subscriber level user.
 
@@ -27,6 +27,7 @@ This plugin is plug and play! Once you have turned it on, it will be in action! 
 - Copyrights : Olivier @ L'autre monde 2005-2009
 
 2/ Release history :
+- 1.2 (29/06/2009) : updated for WP 2.8 compatibility, improved page access test logic
 - 1.1 (29/03/2009) : prevented access through alternate url
 - 1.0 (10/03/2009) : original release
 
