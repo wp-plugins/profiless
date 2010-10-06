@@ -3,8 +3,8 @@ Contributors: Olivier
 Donate link: http://www.lautre-monde.fr
 Tags: admin,profile,security
 Requires at least: 2.7.1
-Tested up to: 3.0
-Stable tag: 1.5
+Tested up to: 3.0.1
+Stable tag: 1.6
 
 Profiless is a plugin that removes access to the profile page for the subscriber level user.
 
@@ -24,9 +24,12 @@ This plugin is plug and play! Once you have turned it on, it will be in action! 
 - Release 1.0 of Profiless is free of use (this doesn't mean that it will be the case for the entire life of this plugin, you never know what can happen in life).
 - I won't assume any responsibility for any problem that could happen as part of the use of this plugin so use it at your own risk.
 - The plugin has been designed and tested under Wordpress 2.7.1. It may work under others releases but I haven't tested so I cannot commit on it.
-- Copyrights : Olivier @ L'autre monde 2005-2009
+- Copyrights : Olivier @ L'autre monde 2005-2010
 
 == Changelog ==
+
+= 1.6 (06/10/2010) =
+* removed usage of deprecated user_level
 
 = 1.5 (20/06/2010) =
 * added WP 3.0 compatibility
