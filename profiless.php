@@ -2,9 +2,9 @@
 /*
 Plugin Name: Profiless
 Plugin URI: http://www.lautre-monde.fr/profiless/
-Description: Profiless is a plugin that removes access to the profile page for the subscriber level user.
+Description: Profiless is a plugin that removes access to the profile page based on user role.
 Author: Olivier
-Version: 1.6
+Version: 1.7
 Author URI: http://www.lautre-monde.fr
 */
 
@@ -14,9 +14,9 @@ Author URI: http://www.lautre-monde.fr
 - Release 1.0 of Profiless is free of use (this doesn't mean that it will be the case for the entire life of this plugin, you never know what can happen in life).
 - I won't assume any responsibility for any problem that could happen as part of the use of this plugin so use it at your own risk.
 - The plugin has been designed and tested under Wordpress 2.7.1. It may work under others releases but I haven't tested so I cannot commit on it.
-- Copyrights : Olivier @ L'autre monde 2005-2010
 
 2/ Release history :
+- 1.7 (15/08/2012) : added an option page to allow selection of user role to be locked out
 - 1.6 (06/10/2010) : removed usage of deprecated user_level
 - 1.5 (20/06/2010) : added WP 3.0 compatibility
 - 1.4 (27/11/2009) : fixed php error (wrong closing tag)
@@ -26,16 +26,67 @@ Author URI: http://www.lautre-monde.fr
 - 1.0 (10/03/2009) : original release
 
 3/ Plugin description :
-This plugin is very simple! It removes the menu icon to access the profile page for the level 0 user in wordpress admin pannel. It also redirects the level 0 user to the admin
+This plugin is very simple! It removes the menu icon to access the profile page for the selected user roles in wordpress admin pannel. It also redirects the locked user to the admin
 homepage if it tries to access directly the profile page (as the menuitem has been removed).
 */
 
-$profiless_version = '1.5';
+$profiless_version = '1.7';
+
+function profiless_options()
+{
+	global $profiless_version, $profiless_settings;
+
+	if (!current_user_can('administrator'))
+		die('-1');
+	
+	$profiless_settings = get_option('profiless');
+	
+	echo '<h1 style="text-align:center">Profiless '.$profiless_version.'</h1>';
+	
+	if (isset($_POST['profiless_save_options']))
+	{
+		check_admin_referer('save-profiless-options');
+		echo '<div id="message" class="updated fade"><p>Options successfully updated!<br /></p></div><br />';
+		
+		$locked_profile_roles = array();
+		$roles = get_editable_roles();
+		foreach ($roles as $role)
+		{
+			$locked_profile_roles[$role['name']] = isset($_POST['locked_profile_roles_'.strtolower($role['name'])]) ? 1 : 0;
+		}
+		$profiless_settings['locked_profile_roles'] = $locked_profile_roles;
+		update_option('profiless', $profiless_settings);
+	}
+
+	$profiless_settings = get_option('profiless');	
+	
+	echo '<form action="" method="post">';
+	wp_nonce_field('save-profiless-options');
+	
+	echo 'Lock profile page access for the following user roles :<br />';
+	echo '<table class="wats-form-table"><tr><td>';
+	$roles = get_editable_roles();
+	foreach ($roles AS $role)
+	{
+		echo '<input type="checkbox" name="locked_profile_roles_'.strtolower($role['name']).'"';
+		if (is_array($profiless_settings) && isset($profiless_settings['locked_profile_roles'][$role['name']]) && $profiless_settings['locked_profile_roles'][$role['name']] == 1)
+			echo ' checked';
+		echo '> '.translate_user_role($role['name']).'<br />';
+	}
+	echo '</td></tr><tr><td></table>';
+	
+	echo '<input class="button-primary" type="submit" id="profiless_save_options" name="profiless_save_options" value="Save the options" /></form>';
+
+	return;
+}
 
 function profiless_remove_profile_access()
 {
-	global $menu, $current_user, $wp_version;
+	global $menu, $current_user, $wp_version, $profiless_settings;
 
+	$profiless_settings = get_option('profiless');
+	add_options_page('Profiless','Profiless','administrator','profiless','profiless_options');	
+	
 	$plugin_url = trailingslashit(get_option('siteurl')) . 'wp-content/plugins/' . basename(dirname(__FILE__)) .'/';
     if (isset($GLOBALS["HTTP_SERVER_VARS"]["REQUEST_URI"]))
 		$requesteduri = $GLOBALS["HTTP_SERVER_VARS"]["REQUEST_URI"];
@@ -46,7 +97,15 @@ function profiless_remove_profile_access()
 	$result = strpos($requesteduri, '/wp-admin/profile.php');
 	$result2 = strpos($requesteduri, '/wp-admin/user-edit.php');
 	
-    if (current_user_can('subscriber'))
+	$locked = 0;
+	$locked_profile_roles = $profiless_settings['locked_profile_roles'];
+	foreach ($locked_profile_roles AS $key => $value)
+	{
+		if ($value == 1 && current_user_can(strtolower($key)))
+			$locked = 1;
+	}
+    
+	if ($locked == 1)
 	{
 		if ($wp_version >= '2.8')
 			unset($menu[70]);
@@ -54,7 +113,7 @@ function profiless_remove_profile_access()
 			unset($menu[50]);
 	}
 
-    if ((($result !== false) || ($result2 !== false)) && current_user_can('subscriber'))
+    if ((($result !== false) || ($result2 !== false)) && $locked == 1)
         wp_safe_redirect($destpage);
 
 	return;
