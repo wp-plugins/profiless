@@ -6,7 +6,7 @@ Requires at least: 2.7.1
 Tested up to: 3.4.1
 Stable tag: 1.7
 
-Profiless is a plugin that removes access to the profile page for the subscriber level user.
+Profiless is a plugin that removes access to the profile page based on user role.
 
 == Description ==
 
