@@ -19,10 +19,10 @@ Get to the options page and set the user roles for which you want to lock profil
 == Frequently Asked Questions ==
 
 License terms :
-- You are free to use Profiless.
-- Release 1.0 of Profiless is free of use (this doesn't mean that it will be the case for the entire life of this plugin, you never know what can happen in life).
-- I won't assume any responsibility for any problem that could happen as part of the use of this plugin so use it at your own risk.
-- The plugin has been designed and tested under Wordpress 2.7.1. It may work under others releases but I haven't tested so I cannot commit on it.
+* You are free to use Profiless.
+* Release 1.0 of Profiless is free of use (this doesn't mean that it will be the case for the entire life of this plugin, you never know what can happen in life).
+* I won't assume any responsibility for any problem that could happen as part of the use of this plugin so use it at your own risk.
+* The plugin has been designed and tested under Wordpress 2.7.1. It may work under others releases but I haven't tested so I cannot commit on it.
 
 == Changelog ==
 
