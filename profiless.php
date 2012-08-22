@@ -4,7 +4,7 @@ Plugin Name: Profiless
 Plugin URI: http://www.lautre-monde.fr/profiless/
 Description: Profiless is a plugin that removes access to the profile page based on user role.
 Author: Olivier
-Version: 1.7
+Version: 1.8
 Author URI: http://www.lautre-monde.fr
 */
 
@@ -16,6 +16,7 @@ Author URI: http://www.lautre-monde.fr
 - The plugin has been designed and tested under Wordpress 2.7.1. It may work under others releases but I haven't tested so I cannot commit on it.
 
 2/ Release history :
+- 1.8 (22/08/2012) : fixed a bug with old WP installations
 - 1.7 (15/08/2012) : added an option page to allow selection of user role to be locked out
 - 1.6 (06/10/2010) : removed usage of deprecated user_level
 - 1.5 (20/06/2010) : added WP 3.0 compatibility
@@ -30,7 +31,7 @@ This plugin is very simple! It removes the menu icon to access the profile page 
 homepage if it tries to access directly the profile page (as the menuitem has been removed).
 */
 
-$profiless_version = '1.7';
+$profiless_version = '1.8';
 
 function profiless_options()
 {
@@ -52,7 +53,7 @@ function profiless_options()
 		$roles = get_editable_roles();
 		foreach ($roles as $role)
 		{
-			$locked_profile_roles[$role['name']] = isset($_POST['locked_profile_roles_'.strtolower($role['name'])]) ? 1 : 0;
+			$locked_profile_roles[strtolower(before_last_bar($role['name']))] = isset($_POST['locked_profile_roles_'.strtolower(before_last_bar($role['name']))]) ? 1 : 0;
 		}
 		$profiless_settings['locked_profile_roles'] = $locked_profile_roles;
 		update_option('profiless', $profiless_settings);
@@ -68,8 +69,9 @@ function profiless_options()
 	$roles = get_editable_roles();
 	foreach ($roles AS $role)
 	{
-		echo '<input type="checkbox" name="locked_profile_roles_'.strtolower($role['name']).'"';
-		if (is_array($profiless_settings) && isset($profiless_settings['locked_profile_roles'][$role['name']]) && $profiless_settings['locked_profile_roles'][$role['name']] == 1)
+		$role_name = strtolower(before_last_bar($role['name']));
+		echo '<input type="checkbox" name="locked_profile_roles_'.$role_name.'"';
+		if (is_array($profiless_settings) && isset($profiless_settings['locked_profile_roles'][$role_name]) && $profiless_settings['locked_profile_roles'][$role_name] == 1)
 			echo ' checked';
 		echo '> '.translate_user_role($role['name']).'<br />';
 	}
@@ -98,13 +100,16 @@ function profiless_remove_profile_access()
 	$result2 = strpos($requesteduri, '/wp-admin/user-edit.php');
 	
 	$locked = 0;
-	$locked_profile_roles = $profiless_settings['locked_profile_roles'];
-	foreach ($locked_profile_roles AS $key => $value)
+	if (is_array($profiless_settings) && isset($profiless_settings['locked_profile_roles']))
 	{
-		if ($value == 1 && current_user_can(strtolower($key)))
-			$locked = 1;
-	}
-    
+		$locked_profile_roles = $profiless_settings['locked_profile_roles'];
+		foreach ($locked_profile_roles AS $key => $value)
+		{
+			if ($value == 1 && current_user_can($key))
+				$locked = 1;
+		}
+    }
+	
 	if ($locked == 1)
 	{
 		if ($wp_version >= '2.8')
