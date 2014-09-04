@@ -117,6 +117,9 @@ function profiless_remove_profile_access()
 		else
 			unset($menu[50]);
 	}
+	
+	if (current_user_can('subscriber'))
+		unset($menu[4]);
 
     if ((($result !== false) || ($result2 !== false)) && $locked == 1)
         wp_safe_redirect($destpage);
