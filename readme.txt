@@ -3,7 +3,7 @@ Contributors: Olivier
 Donate link: http://www.lautre-monde.fr
 Tags: admin,profile,security
 Requires at least: 2.7.1
-Tested up to: 4.0
+Tested up to: 4.2
 Stable tag: 1.8
 
 Profiless is a plugin that removes access to the profile page based on user role.
